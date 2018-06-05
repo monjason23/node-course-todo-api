@@ -17,7 +17,6 @@ app.post("/todos", (httpRequest, httpResponse) => {
 
   newTodo.save().then(
     result => {
-      console.log(result);
       httpResponse.status(200).send(result);
     },
     error => {
@@ -29,3 +28,7 @@ app.post("/todos", (httpRequest, httpResponse) => {
 app.listen(PORT, () => {
   console.log("App is running at port 3000");
 });
+
+module.exports = {
+  app
+};
