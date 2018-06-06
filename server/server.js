@@ -25,6 +25,17 @@ app.post("/todos", (httpRequest, httpResponse) => {
   );
 });
 
+app.get("/todos", (httpRequest, httpResponse) => {
+  Todo.find().then(
+    todos => {
+      httpResponse.send({ todos });
+    },
+    err => {
+      httpResponse.status(400).send(err);
+    }
+  );
+});
+
 app.listen(PORT, () => {
   console.log("App is running at port 3000");
 });
