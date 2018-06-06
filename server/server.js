@@ -20,7 +20,7 @@ app.post("/todos", (httpRequest, httpResponse) => {
       httpResponse.status(200).send(result);
     },
     error => {
-      console.log(error);
+      httpResponse.status(400).send(error);
     }
   );
 });
