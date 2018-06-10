@@ -36,6 +36,24 @@ app.get("/todos", (httpRequest, httpResponse) => {
   );
 });
 
+app.get("/todos/:id", (httpRequest, httpResponse) => {
+  let { ObjectId } = mongoose.Types;
+  let id = httpRequest.params.id;
+
+  if (!ObjectId.isValid(id)) httpResponse.status(404).send();
+
+  Todo.findById(id)
+    .then(todo => {
+      if (!todo) {
+        return httpResponse.status(404).send("User not found");
+      }
+      httpResponse.status(200).send({ todo });
+    })
+    .catch(err => {
+      httpResponse.status(404).send();
+    });
+});
+
 app.listen(PORT, () => {
   console.log("App is running at port 3000");
 });
