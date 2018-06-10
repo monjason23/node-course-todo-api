@@ -8,7 +8,7 @@ const { Todo } = require("./models/Todo");
 const app = express();
 app.use(bodyParser.json());
 
-const PORT = 3000 || process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 app.post("/todos", (httpRequest, httpResponse) => {
   let newTodo = new Todo({
