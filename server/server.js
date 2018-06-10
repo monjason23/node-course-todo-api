@@ -45,7 +45,7 @@ app.get("/todos/:id", (httpRequest, httpResponse) => {
   Todo.findById(id)
     .then(todo => {
       if (!todo) {
-        return httpResponse.status(404).send("User not found");
+        return httpResponse.status(404).send("Todo not found");
       }
       httpResponse.status(200).send({ todo });
     })
