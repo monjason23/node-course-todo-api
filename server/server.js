@@ -55,7 +55,7 @@ app.get("/todos/:id", (httpRequest, httpResponse) => {
 });
 
 app.listen(PORT, () => {
-  console.log("App is running at port 3000");
+  console.log(`App is running at port ${PORT}`);
 });
 
 module.exports = {
