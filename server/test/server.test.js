@@ -3,8 +3,12 @@ const request = require("supertest");
 
 const { app } = require("../server");
 const { Todo } = require("../models/Todo");
+const { ObjectID } = require("mongodb");
 
-const sampleTodos = [{ text: "Dance Momoland" }, { text: "Boom boom!" }];
+const sampleTodos = [
+  { _id: new ObjectID(), text: "Dance Momoland" },
+  { _id: new ObjectID(), text: "Boom boom!" }
+];
 
 beforeEach(done => {
   Todo.remove({})
@@ -67,6 +71,33 @@ describe("GET /todos", () => {
       .expect(res => {
         expect(res.body.todos.length).toBe(2);
       })
-      .end(done());
+      .end(done);
+  });
+});
+
+describe("GET /todos/id", () => {
+  it("Should retrieve a valid todo with the provided id", done => {
+    request(app)
+      .get(`/todos/${sampleTodos[0]._id.toHexString()}`)
+      .expect(res => {
+        expect(res.body.todo.text).toBe(sampleTodos[0].text);
+      })
+      .end(done);
+  });
+
+  it("Should return 404 when todo id is not found", done => {
+    let newId = new ObjectID();
+
+    request(app)
+      .get(`/todos/${newId.toHexString()}}`)
+      .expect(404)
+      .end(done);
+  });
+
+  it("Should return 404 when todo id is not valid object id", done => {
+    request(app)
+      .get(`/todos/123`)
+      .expect(404)
+      .end(done);
   });
 });
