@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const { mongoose } = require("./db/mongoose");
 const { User } = require("./models/User");
 const { Todo } = require("./models/Todo");
+const _ = require("lodash");
 
 const app = express();
 app.use(bodyParser.json());
@@ -72,6 +73,27 @@ app.delete("/todos/:id", (httpRequest, httpResponse) => {
       httpResponse.sendStatus(404);
     }
   );
+});
+
+app.patch("/todos/:id", (httpRequest, httpResponse) => {
+  let id = httpRequest.params.id;
+
+  let newBody = _.pick(httpRequest.body, ["text", "completed"]);
+
+  if (_.isBoolean(newBody.completed) && newBody.completed) {
+    newBody.completedAt = new Date().getTime();
+  } else {
+    newBody.completed = false;
+    newBody.completedAt = null;
+  }
+
+  Todo.findByIdAndUpdate(id, { $set: newBody }, { new: true })
+    .then(todo => {
+      if (!todo) return httpResponse.sendStatus(404);
+
+      httpResponse.status(200).send({ todo });
+    })
+    .catch(err => httpResponse.sendStatus(404));
 });
 
 app.listen(PORT, () => {
