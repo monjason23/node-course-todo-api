@@ -7,7 +7,7 @@ const { ObjectID } = require("mongodb");
 
 const sampleTodos = [
   { _id: new ObjectID(), text: "Dance Momoland" },
-  { _id: new ObjectID(), text: "Boom boom!" }
+  { _id: new ObjectID(), text: "Boom boom!", completedAt: 333 }
 ];
 
 beforeEach(done => {
@@ -136,5 +136,42 @@ describe("DELETE /todos/id", () => {
       .delete(`/todos/abc123`)
       .expect(404)
       .end(done);
+  });
+});
+
+describe("PATCH /todos/id", () => {
+  let hexID = sampleTodos[1]._id.toHexString();
+
+  it("Should update the todo", done => {
+    let newText = "Updated text!";
+
+    request(app)
+      .patch(`/todos/${hexID}`)
+      .send({ text: newText, completed: true })
+      .expect(200)
+      .expect(res => {
+        expect(res.body.todo.completed).toBe(true);
+        expect(res.body.todo.text).toBe(newText);
+        expect(res.body.todo.completedAt).toBeA("number");
+        done();
+      })
+      .end((err, res) => {
+        if (err) return done(err);
+      });
+  });
+
+  it("Should clear completedAt when completed is false", done => {
+    request(app)
+      .patch(`/todos/${hexID}`)
+      .send({ completed: false })
+      .expect(200)
+      .expect(res => {
+        expect(res.body.todo.completed).toBe(false);
+        expect(res.body.todo.completedAt).toNotExist();
+        done();
+      })
+      .end((err, res) => {
+        if (err) return done(err);
+      });
   });
 });

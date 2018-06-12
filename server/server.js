@@ -64,13 +64,13 @@ app.delete("/todos/:id", (httpRequest, httpResponse) => {
   Todo.findByIdAndRemove(id).then(
     todo => {
       if (!todo) {
-        return httpResponse.sendStatus(404);
+        return httpResponse.status(404).send();
       }
 
       httpResponse.status(200).send({ todo });
     },
     err => {
-      httpResponse.sendStatus(404);
+      httpResponse.status(404).send();
     }
   );
 });
