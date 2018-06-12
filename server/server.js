@@ -10,6 +10,8 @@ app.use(bodyParser.json());
 
 const PORT = process.env.PORT || 3000;
 
+const { ObjectId } = mongoose.Types;
+
 app.post("/todos", (httpRequest, httpResponse) => {
   let newTodo = new Todo({
     text: httpRequest.body.text
@@ -37,7 +39,6 @@ app.get("/todos", (httpRequest, httpResponse) => {
 });
 
 app.get("/todos/:id", (httpRequest, httpResponse) => {
-  let { ObjectId } = mongoose.Types;
   let id = httpRequest.params.id;
 
   if (!ObjectId.isValid(id)) httpResponse.status(404).send();
@@ -52,6 +53,25 @@ app.get("/todos/:id", (httpRequest, httpResponse) => {
     .catch(err => {
       httpResponse.status(404).send();
     });
+});
+
+app.delete("/todos/:id", (httpRequest, httpResponse) => {
+  let id = httpRequest.params.id;
+
+  if (!ObjectId.isValid(id)) httpResponse.sendStatus(404);
+
+  Todo.findByIdAndRemove(id).then(
+    todo => {
+      if (!todo) {
+        return httpResponse.sendStatus(404);
+      }
+
+      httpResponse.status(200).send(todo);
+    },
+    err => {
+      httpResponse.sendStatus(404);
+    }
+  );
 });
 
 app.listen(PORT, () => {
