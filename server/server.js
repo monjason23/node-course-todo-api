@@ -66,7 +66,7 @@ app.delete("/todos/:id", (httpRequest, httpResponse) => {
         return httpResponse.sendStatus(404);
       }
 
-      httpResponse.status(200).send(todo);
+      httpResponse.status(200).send({ todo });
     },
     err => {
       httpResponse.sendStatus(404);
