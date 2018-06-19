@@ -1,3 +1,5 @@
+require("../server/config/config");
+
 const express = require("express");
 const bodyParser = require("body-parser");
 
@@ -12,6 +14,8 @@ app.use(bodyParser.json());
 const PORT = process.env.PORT || 3000;
 
 const { ObjectId } = mongoose.Types;
+
+//TODOS
 
 app.post("/todos", (httpRequest, httpResponse) => {
   let newTodo = new Todo({
@@ -94,6 +98,24 @@ app.patch("/todos/:id", (httpRequest, httpResponse) => {
       httpResponse.status(200).send({ todo });
     })
     .catch(err => httpResponse.sendStatus(404));
+});
+
+//USERS
+app.post("/users", (httpRequest, httpResponse) => {
+  let body = _.pick(httpRequest.body, ["email", "password"]);
+  let user = new User(body);
+
+  user
+    .save()
+    .then(() => {
+      return user.generateAuthToken();
+    })
+    .then(token => {
+      httpResponse.header("x-auth", token).send(user);
+    })
+    .catch(err => {
+      httpResponse.status(400).send(err);
+    });
 });
 
 app.listen(PORT, () => {
