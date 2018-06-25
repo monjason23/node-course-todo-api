@@ -6,6 +6,9 @@ const bodyParser = require("body-parser");
 const { mongoose } = require("./db/mongoose");
 const { User } = require("./models/User");
 const { Todo } = require("./models/Todo");
+
+const { authenticate } = require("./middleware/authenticate");
+
 const _ = require("lodash");
 
 const app = express();
@@ -116,6 +119,10 @@ app.post("/users", (httpRequest, httpResponse) => {
     .catch(err => {
       httpResponse.status(400).send(err);
     });
+});
+
+app.get("/users/me", authenticate, (httpRequest, httpResponse) => {
+  httpResponse.send(httpRequest.user);
 });
 
 app.listen(PORT, () => {
