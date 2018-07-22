@@ -1,64 +1,60 @@
 const { ObjectID } = require("mongodb");
-const { Todo } = require("../../models/Todo");
-const { User } = require("../../models/User");
 const jwt = require("jsonwebtoken");
+
+const { Todo } = require("./../../models/Todo");
+const { User } = require("./../../models/User");
 
 const userOneId = new ObjectID();
 const userTwoId = new ObjectID();
-
-const sampleUsers = [
+const users = [
   {
     _id: userOneId,
-    email: "mon@sample.com",
-    password: "monpass",
+    email: "andrew@example.com",
+    password: "userOnePass",
     tokens: [
       {
         access: "auth",
-        token: jwt
-          .sign({ _id: userOneId.toHexString(), access: "auth" }, "aaa111")
-          .toString()
+        token: jwt.sign({ _id: userOneId, access: "auth" }, "abc123").toString()
       }
     ]
   },
   {
     _id: userTwoId,
-    email: "jason@sample.com",
-    password: "jasonpass",
-    tokens: [
-      {
-        access: "auth",
-        token: jwt
-          .sign({ _id: userOneId.toHexString(), access: "auth" }, "aaa111")
-          .toString()
-      }
-    ]
+    email: "jen@example.com",
+    password: "userTwoPass"
   }
 ];
 
-const sampleTodos = [
-  { _id: new ObjectID(), text: "Dance Momoland" },
-  { _id: new ObjectID(), text: "Boom boom!", completedAt: 333 }
+const todos = [
+  {
+    _id: new ObjectID(),
+    text: "First test todo"
+  },
+  {
+    _id: new ObjectID(),
+    text: "Second test todo",
+    completed: true,
+    completedAt: 333
+  }
 ];
 
 const populateTodos = done => {
   Todo.remove({})
     .then(() => {
-      return Todo.insertMany(sampleTodos);
+      return Todo.insertMany(todos);
     })
-    .then(() => done())
-    .catch(err => console.log(err));
+    .then(() => done());
 };
 
 const populateUsers = done => {
   User.remove({})
     .then(() => {
-      var user1 = new User(sampleUsers[0]).save();
-      var user2 = new User(sampleUsers[1]).save();
+      var userOne = new User(users[0]).save();
+      var userTwo = new User(users[1]).save();
 
-      Promise.all([user1, user2]);
+      return Promise.all([userOne, userTwo]);
     })
-    .then(() => done())
-    .catch(err => console.log(err));
+    .then(() => done());
 };
 
-module.exports = { sampleTodos, sampleUsers, populateTodos, populateUsers };
+module.exports = { todos, populateTodos, users, populateUsers };
