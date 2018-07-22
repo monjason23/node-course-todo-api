@@ -138,6 +138,18 @@ app.get("/users/me", authenticate, (httpRequest, httpResponse) => {
   httpResponse.send(httpRequest.user);
 });
 
+app.delete("/users/me/token", authenticate, (httpRequest, httpResponse) => {
+  httpRequest.user.removeToken(httpRequest.token).then(
+    () => {
+      httpResponse.status(200).send();
+    },
+    () => {
+      httpResponse.status(400).send();
+    }
+  );
+});
+
+//SERVER
 app.listen(PORT, () => {
   console.log(`App is running at port ${PORT}`);
 });
