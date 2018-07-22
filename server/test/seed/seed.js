@@ -28,13 +28,7 @@ const sampleUsers = [
       {
         access: "auth",
         token: jwt
-          .sign(
-            {
-              _id: userTwoId.toHexString(),
-              access: "auth"
-            },
-            "aaa111"
-          )
+          .sign({ _id: userOneId.toHexString(), access: "auth" }, "aaa111")
           .toString()
       }
     ]

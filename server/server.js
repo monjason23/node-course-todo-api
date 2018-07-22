@@ -2,6 +2,7 @@ require("../server/config/config");
 
 const express = require("express");
 const bodyParser = require("body-parser");
+const bycrypt = require("bcryptjs");
 
 const { mongoose } = require("./db/mongoose");
 const { User } = require("./models/User");
@@ -119,6 +120,18 @@ app.post("/users", (httpRequest, httpResponse) => {
     .catch(err => {
       httpResponse.status(400).send(err);
     });
+});
+
+app.post("/users/login", (httpRequest, httpResponse) => {
+  let body = _.pick(httpRequest.body, ["email", "password"]);
+
+  User.findByCredentials(body.email, body.password)
+    .then(user => {
+      return user.generateAuthToken().then(token => {
+        httpResponse.header("x-auth", token).send(user);
+      });
+    })
+    .catch(err => httpResponse.status(400).send(err));
 });
 
 app.get("/users/me", authenticate, (httpRequest, httpResponse) => {
