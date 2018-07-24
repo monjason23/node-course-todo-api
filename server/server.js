@@ -139,14 +139,17 @@ app.get("/users/me", authenticate, (httpRequest, httpResponse) => {
 });
 
 app.delete("/users/me/token", authenticate, (httpRequest, httpResponse) => {
-  httpRequest.user.removeToken(httpRequest.token).then(
-    () => {
-      httpResponse.status(200).send();
-    },
-    () => {
-      httpResponse.status(400).send();
-    }
-  );
+  httpRequest.user
+    .removeToken(httpRequest.token)
+    .then(
+      () => {
+        httpResponse.status(200).send();
+      },
+      () => {
+        httpResponse.status(400).send();
+      }
+    )
+    .catch(err => httpResponse.status(400).send(err));
 });
 
 //SERVER
